@@ -49,8 +49,13 @@ func main() {
 				fmt.Fprintf(os.Stderr, "Error establishing remote connection: %s\n", err)
 			}
 			forwarder := NewForwarder(*srcConnection, *remoteConnection)
+			defer remoteConnection.Close()
+			defer srcConnection.Close()
+
 			fmt.Fprintf(os.Stdout, "Started forwarding from %s to %s\n", srcConnection.LocalAddr().String(), remoteConnection.RemoteAddr().String())
+
 			err = forwarder.Start()
+
 			fmt.Fprintf(os.Stdout, "Stopped forwarding from %s to %s, error: %s\n", srcConnection.LocalAddr().String(), remoteConnection.RemoteAddr().String(), err)
 		}()
 	}
