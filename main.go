@@ -95,7 +95,10 @@ func (fw *Forwarder) Forward(in io.Reader, out io.Writer) {
 		}
 		_, err = out.Write(buffer[:read])
 		if err != nil {
-			fw.errChannel <- err
+			select {
+			case fw.errChannel <- err:
+			default:
+			}
 			break
 		}
 		if fw.stop {
